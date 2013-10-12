@@ -11,3 +11,4 @@ dist
 npm-debug.log
 clangout
 tools/xctool
+*.tmproj
