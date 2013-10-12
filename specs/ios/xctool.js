@@ -6,6 +6,7 @@ var should = require('should'),
 	fs = require('fs'),
 	temp = require('temp'),
 	buildlib = require('../../lib/ios/buildlib'),
+	codegen = require('../../lib/ios/jsc/codegen'),
 	typegenerator = require('../../lib/ios/jsc/typegenerator'),
 	exec = require('child_process').exec,
 	spawn = require('child_process').spawn,
@@ -53,10 +54,10 @@ describe("ios xctool", function(){
 						'char [37]',
 						'char [4096]',
 						'char [512]',
-						'int *', 
-						'int []', 
-						'int [1024]', 
-						'int [8]', 
+						'int *',
+						'int []',
+						'int [1024]',
+						'int [8]',
 						'int [18]',
 						'int [19]',
 						'integer_t *',
@@ -77,12 +78,12 @@ describe("ios xctool", function(){
 					outdir: sourcedir,
 					libname: 'libhyperloop.a'
 				};
-				typegenerator.compile(metadata, config, function(err,results){
+				codegen.compile(metadata, config, function(err,results){
 					if (err) return done(err);
 
 					var testlibdir = path.join(__dirname,"testsuite","testsuite");
 
-					
+
 					// copy libfile into path so that we can still run inside xcode as well
 					fs.writeFileSync(path.join(testlibdir,config.libname),fs.readFileSync(results.libfile));
 

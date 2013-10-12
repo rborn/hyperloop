@@ -11,4 +11,11 @@ dist
 npm-debug.log
 clangout
 tools/xctool
+*.tlog
+*.log
+*.intermediate
+Debug
+*.suo
+*.sdf
+*.opensdf
 *.tmproj
