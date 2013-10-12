@@ -1,35 +1,35 @@
-@import('UIKit/UIApplication');
-@import('UIKit/UIAlertView');
-
-
-
-var callback = function(e) {
-	console.log(e);
-}
-
-var alert = new UIAlertView();
-alert.title = 'The Title';
-alert.message = 'The Message';
-alert.addButtonWithTitle('OK');
-alert.addButtonWithTitle('Cancel');
-
-
-@class('TheClick', NSObject, [], [
-	{
-		name: 'we_click',
-		returnType: 'string',
-		arguments: [{type:'id',name:'sender'}],
-		action: function(e) {
-			console.log(e);
-		}
-	}
-]);
-
-
-
-alert.didDismissWithButtonIndex(new TheClick());
-
-alert.show();
+// @import('UIKit/UIApplication');
+// @import('UIKit/UIAlertView');
+// 
+// 
+// 
+// var callback = function(e) {
+// 	console.log(e);
+// }
+// 
+// var alert = new UIAlertView();
+// alert.title = 'The Title';
+// alert.message = 'The Message';
+// alert.addButtonWithTitle('OK');
+// alert.addButtonWithTitle('Cancel');
+// 
+// 
+// @class('TheClick', NSObject, [], [
+// 	{
+// 		name: 'we_click',
+// 		returnType: 'string',
+// 		arguments: [{type:'id',name:'sender'}],
+// 		action: function(e) {
+// 			console.log(e);
+// 		}
+// 	}
+// ]);
+// 
+// 
+// 
+// alert.didDismissWithButtonIndex(new TheClick());
+// 
+// alert.show();
 
 
 
@@ -37,22 +37,23 @@ alert.show();
  * Alert example
  * run: yperloop package --platform=ios --src=examples/alert/ --dest=build --name=AlertView --appid=com.appcelerator.alertview --launch
  **/
-// @import('UIKit/UIApplication');
-// @import('UIKit/UIWindow');
-// @import('UIKit/UIColor');
-// @import('UIKit/UIScreen');
-// @import('UIKit/UIView');
-// @import('UIKit/UIAlertView');
-// @import('UIKit/UIAlertViewDelegate');
-// 
-// @import('Foundation/NSLog');
-// @import('Foundation/NSString');
-// 
-// // THIS IS UNTESTED! 
-// 
-// // var win = UIApplication.sharedApplication().keyWindow;// 
-// // win.backgroundColor = UIColor.whiteColor();
-// 
+@import('UIKit/UIApplication');
+@import('UIKit/UIWindow');
+@import('UIKit/UIColor');
+@import('UIKit/UIScreen');
+@import('UIKit/UIView');
+@import('UIKit/UIAlertView');
+@import('UIKit/UIAlertViewDelegate');
+
+@import('Foundation/NSLog');
+@import('Foundation/NSString');
+@import('Foundation/NSObject');
+
+// THIS IS UNTESTED! 
+
+var win = UIApplication.sharedApplication().keyWindow;// 
+win.backgroundColor = UIColor.whiteColor();
+
 // function alert(message){
 // 	var alert = new UIAlertView();
 // 	alert.title = "Notice";
