@@ -155,6 +155,10 @@ describe("jsc", function(){
 				assert(sliceBuf.SIZE_OF_LONG===4,"SIZE_OF_LONG should be 4, was: "+sliceBuf.SIZE_OF_LONG);
 				assert(sliceBuf.SIZE_OF_DOUBLE===8,"SIZE_OF_DOUBLE should be 8, was: "+sliceBuf.SIZE_OF_DOUBLE);
 
+				var unicode = new JSBuffer();
+				unicode.putString("こんにちは世界");
+				assert(unicode.length===21,"こんにちは世界 length should be 21, was: "+unicode.length);
+
 
 			}).toString().trim().replace(/^function \(\){/,'').replace(/}$/,'').replace(/[\n]/g,'\\n').replace(/"/g,'\\"').trim();
 
@@ -162,10 +166,11 @@ describe("jsc", function(){
 			fs.writeFileSync(path.join(srcdir,"jsc_test.m"),fs.readFileSync(path.join(__dirname,"src","jsc_test.m")).toString().replace("JS_TEST_SRC",js_test_src));
 
 			var headerPath = path.join(__dirname,"../../lib/ios/jsc/templates/source"),
+				sourceFiles = fs.readdirSync(headerPath).filter(function(f){return (f.indexOf('.h')==-1)}).map(function(f){return path.join(headerPath,f)}),
 				options = {
 					minVersion : "7.0",
 					libname: "libjsc_test.a",
-					srcfiles: [path.join(headerPath,"JSBuffer.m"),path.join(headerPath,"hyperloop.m"),path.join(srcdir,"jsc_test.m")],
+					srcfiles: sourceFiles.concat([path.join(srcdir,"jsc_test.m")]),
 					outdir: build,
 					cflags: ["-I"+headerPath],
 					linkflags: ['-framework JavaScriptCore'],
@@ -175,7 +180,8 @@ describe("jsc", function(){
 					debug: true,
 					launch: true,
 					no_arc: true,
-					hide: true
+					hide: true,
+					classprefix: 'hl$'
 				},
 				failures = 0,
 				failureRegex = /^FAIL:/;

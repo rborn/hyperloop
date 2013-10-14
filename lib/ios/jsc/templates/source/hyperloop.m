@@ -251,7 +251,7 @@ bool HyperloopPrivateObjectIsType(JSObjectRef object, JSPrivateObjectType type)
  */
 JSValueRef HyperloopMakeException(JSContextRef ctx, const char *error, JSValueRef *exception)
 {
-    if (*exception!=NULL)
+    if (exception!=NULL)
     {
         JSStringRef string = JSStringCreateWithUTF8CString(error);
         JSValueRef message = JSValueMakeString(ctx, string);
@@ -414,7 +414,7 @@ NSString* HyperloopToNSString(JSContextRef ctx, JSValueRef value)
     else if (JSValueIsBoolean(ctx,value))
     {
         bool result = JSValueToBoolean(ctx,value);
-        return [[NSNumber numberWithBool:result] stringValue];
+        return result ? @"true" : @"false";
     }
     else if (JSValueIsNull(ctx,value) || JSValueIsUndefined(ctx,value))
     {
@@ -478,14 +478,8 @@ JSValueRef HyperloopLogger (JSContextRef ctx, JSObjectRef function, JSObjectRef 
 /**
  * create a hyperloop VM
  */
-JSContextRef HyperloopCreateVM (NSString *name)
+JSGlobalContextRef HyperloopCreateVM (NSString *name, NSString *prefix)
 {
-	Class<HyperloopModule> cls = NSClassFromString(name);
-	if (cls==nil)
-	{
-		return nil;
-	}
-
     JSGlobalContextRef globalContextRef = JSGlobalContextCreate(NULL);
     JSObjectRef globalObjectref = JSContextGetGlobalObject(globalContextRef);
 
@@ -507,11 +501,20 @@ JSContextRef HyperloopCreateVM (NSString *name)
     JSObjectSetProperty(globalContextRef, globalObjectref, prop, wrapper, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontEnum | kJSPropertyAttributeDontDelete, 0);
     JSStringRelease(prop);
 
+    // setup our globals object
+    JSStringRef globalProperty = JSStringCreateWithUTF8CString("globals");
+    JSObjectSetProperty(globalContextRef, globalObjectref, globalProperty, globalObjectref, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
+    JSStringRelease(globalProperty);
+
     // retain it
     JSGlobalContextRetain(globalContextRef);
 
     // load the app into the context
-    [cls load:globalContextRef];
+    HyperloopJS *module = HyperloopLoadJS(globalContextRef,nil,name,prefix);
+    if (module==nil)
+    {
+        return nil;
+    }
 
     return globalContextRef;
 }
@@ -536,7 +539,7 @@ JSGlobalContextRef HyperloopGetGlobalContext (JSContextRef ctx)
 /**
  * destroy a hyperloop VM
  */
-void HyperloopDestroyVM (JSContextRef ctx)
+void HyperloopDestroyVM (JSGlobalContextRef ctx)
 {
     JSGlobalContextRef globalCtx = HyperloopGetGlobalContext(ctx);
     if (globalCtx!=NULL)
