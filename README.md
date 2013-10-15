@@ -6,62 +6,68 @@ Hyperloop is a next-generation compiler that converts JavaScript source code int
 
 ## Requirements
 
-Hyperloop requires at least [Node.js](http://nodejs.org/) 0.10.5 and iOS SDK 7.0.  _Currently, hyperloop is only being developed and tested on OSX, however, Windows and Linux will eventually be supported officially._
+Hyperloop currently only builds for iOS. It requires the following:
+
+* [Node.js](http://nodejs.org/) >= 0.10.5
+* iOS SDK 7.0.  
+
+> Currently, hyperloop is only being developed and tested on OSX. Windows and Linux will eventually be supported officially.
 
 ## Install
 
-To install hyperloop, using node npm:
+#### from npm
+
+coming soon...
+
+#### from github
 
 ```bash
-[sudo] npm install hyperloop -g
+sudo npm install -g git://github.com/appcelerator/hyperloop.git
+```
+
+If you have chown-ed the NPM folder to your local user (`sudo chown -R $USER /usr/local`) you can leave out the `sudo` bit.
+
+#### fork, clone, and install locally
+
+Assuming your Github username is `hyperloopdev`, fork this repo and execute the following:
+
+```bash
+# create a local cloned repo
+git clone https://github.com/hyperloopdev/hyperloop.git
+
+# change to the new directory
+cd hyperloop
+
+# add the appcelerator repo as a remote
+git remote add appcelerator https://github.com/appcelerator/hyperloop.git
+
+# install dependencies locally
+npm install
+
+# link your PATH to the locally installed hyperloop. This removes the need to `npm install` after changes
+sudo npm link
 ```
 
 ## Quick Start
 
-You can see examples under the `examples` directory.
+To get started with iOS, check out the [Quick Start Guide](https://github.com/appcelerator/hyperloop/wiki/Getting-started-with-iOS-and-Hyperloop).  You can see a number of examples under the [examples directory](https://github.com/appcelerator/hyperloop/tree/master/examples).
 
 To compile, package and launch for iOS, use an example of the following command-line:
 
 ```bash
-hyperloop package --platform=ios --src=examples/simple/ --dest=build --name=foo --appid=com.foo --launch
+hyperloop package --platform=ios --src=examples/ios/simple/ --dest=build --name=foo --appid=com.foo --launch
 ```
 
 The initial compile will take a minute or so to generate the AST for the system frameworks. However, subsequent compiles will be almost instantaneous as it will be cached.  In the future, we plan on speeding this up greatly.
 
 If all goes well, this should compile the application source code and the native application and launch it in the iOS Simulator.
 
-*Note:* Add the `--clean` command to clean the `build` dir before building a different example.
+*Note:* Add the `--clean` command to clean the `build` dir before building a different example. You can also specify a different `--dest` folder to build multiple different examples.
 
-## Platforms Supported
-
-The following Platforms are being targeted for supported.
-
-### Current (already working)
-
-- _iOS_ - iOS 7.0
-
-### Planned (in development)
-
-- _Android_ - Android
-- _Windows 8_ - Win8 desktop
-- _Windows Phone 8_ - Windows Phone / Tablet
-- _OSX_ - OSX desktop
-
-### Experimental Ideas
-
-- _Tizen_ - Tizen OS
-- _Leapmotion_ - Leapmotion SDK
-- _Firefox OS_ - Firefox OS
-- _Blackberry_ - BB 10
-
-## Documentation
+## Documentation & Community
 
 - [Wiki](https://github.com/appcelerator/hyperloop/wiki)
 - [Mailing List](https://groups.google.com/forum/#!forum/tinext)
-
-## Examples
-
-We have built a few examples to show off our work.  Please look in the [Examples](https://github.com/appcelerator/hyperloop/tree/master/examples) folder for them.  Please help by contribributing new examples that show off the power of Hyperloop.
 
 ## Design
 
@@ -74,65 +80,6 @@ The compiler is broken into two subsystems: _backend_ and _frontend_.  The _fron
 The backend compiler will turn the appropriate CNI into the target language of that platform. For example, for iOS, the backend will generate Objective-C source code.  For Android, the backend will generate Java, and so forth.
 
 The backend code will generate JS VM specific code, depending on the engine specified.  By default, the backend will generate code for the [JavaScriptCore](http://trac.webkit.org/wiki/JavaScriptCore) engine (or "JSCore") which is part of the [WebKit](http://en.wikipedia.org/wiki/WebKit) opensource project.  Currently, Hyperloop only supports JSCore. However, we intend to support [V8](https://code.google.com/p/v8/) eventually as well.
-
-#### JavaScriptCore
-
-For JSCore, we have extended it to support additional platforms beyond iOS, such as Android and Windows 8.  In addition, we have extended JSCore to include additional capabilities which work with our compiler instructions.  All of our extensions are available in our public fork of [WebKit](https://github.com/appcelerator/webkit), currently on the branch named `javascriptcore_jsexport_api`.
-
-
-## Current Limitations
-
-### iOS / OSX
-
-
-#### Instances with other than init constructors
-
-To create a new instance, typically `[[obj alloc] init]`, you should use `new Object` in CNI. However, often, you want to call a specific init method.  For example:
-
-~~~objective-c
-var window = [[NSWindow alloc] initWithContentRect:NSRectMake(0,0,100,200) styleMask:NSTitledWindowMask backing:NSBackingStoreBuffered defer:NO];
-~~~
-
-For CNI, you would use the following method.
-
-~~~javascript
-var window = NSWindow.alloc().initWithContentRect(NSRectMake(0,0,100,200),NSTitledWindowMask,NSBackingStoreBuffered,false);
-~~~
-
-#### Named method arguments with different names but same number of parameters
-
-Currently, if you have multiple methods with the same first argument name and different additional arguments as part of the selector and the number of arguments are the same, only the first method will be generated.  We will address this limitation before release.
-
-
-## Tooling Plugins
-
-#### Sublime Text 2
-
-See tools/ST2/README.md for information on how to install the ST2 plugin.
-
-
-## FAQ
-
-#### [iOS] Will this work with iOS 5 or iOS 6?
-
-Nope. iOS 7 is the current minimum for this architecture.
-
-#### [iOS] What happens when I add my own methods to UIView (for example)?  i.e. subclass it?  Does it get compiled in to the native class?  Or is it JS only?  Or maybe there's a specific syntax used to make it a native method vs. JS-only method?
-
-Any JS Object (i.e. Class) imported in principle is a first-class JS object where the native methods and properties are prototypes on the returned JS Object.  This will allow you to also add your own functions and properties to the returned Object as either direct properties of the object or on the prototype of the JS class.
-
-#### Why the non-standard JS symbols like @?
-
-We wanted to specifically distinguish specific keywords that we're using as _special_ CNI keywords distinctly.  We want developers to understand that these keywords are specific to CNI compile-time syntax, thus the special `@` symbol prefix.  This is very similar to what other compilers do such as clang using `@import` to import modules or C pre-processor using `#ifdef` to tell the compiler that it wants to do something special before compiling the language.
-#### Can I write modules?
-
-For Titanium (and Hyperloop), modules just become Hyperloop CNI code packaged as [Common JS](http://wiki.commonjs.org/wiki/CommonJS) and loaded via `require`. In essence, modules as you think of them in traditional Titanium code are now written inline using the target platform's own APIs, directly in Javascript. We will make a new packaging mechanism to make it easier to distribute them such as Node does with NPM modules.
-
-## Hyperloop and Titanium
-
-The next generation Titanium SDK, called [Ti.Next](http://ceogeek.tumblr.com/post/54456815189/thoughts-on-ti-next), is being rebuilt around Hyperloop.  However, we are separating the new compiler (hyperloop) in a standalone project so that developers can use hyperloop without Titanium.  Ti.Next uses the hyperloop compiler to build the new Titanium SDK.
-
-The target for "hyperloop standalone" is developers who would like to write native applications using JavaScript (as a language) but prefer to use the target platforms API directly, instead of using the cross-platform Titanium API.
 
 ## Reporting Bugs or submitting fixes
 
@@ -152,21 +99,23 @@ The original source and design for this project was developed by [Jeff Haynie](h
 
 ```
 project  : hyperloop
- repo age : 7 weeks ago
- commits  : 256
- active   : 39 days
- files    : 220
- authors  :
-   157	Jeff Haynie             61.3%
-    52	Tony Lukasavage         20.3%
-    22	matt-langston           8.6%
-    11	Dawson Toth             4.3%
-     5	Allen Yeung             2.0%
-     4	Matt Langston           1.6%
-     2	Chris Barber            0.8%
-     1	Olivier Morandi         0.4%
-     1	Eric Wing               0.4%
-     1	ewmailing               0.4%
+ repo age : 8 weeks ago
+ commits  : 325
+ active   : 46 days
+ files    : 259
+ authors  : 
+   198	Jeff Haynie             60.9%
+    68	Tony Lukasavage         20.9%
+    22	matt-langston           6.8%
+    15	Dawson Toth             4.6%
+     5	Allen Yeung             1.5%
+     4	Fokke Zandbergen        1.2%
+     4	Matt Langston           1.2%
+     3	Kota Iguchi             0.9%
+     2	Olivier Morandi         0.6%
+     2	Chris Barber            0.6%
+     1	ewmailing               0.3%
+     1	Eric Wing               0.3%
 ```
 
 ## Legal
