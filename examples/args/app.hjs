@@ -1,0 +1,23 @@
+@import('UIKit');
+@import('CoreGraphics');
+@import('Foundation');
+
+var keyWindow = UIApplication.sharedApplication().keyWindow;
+keyWindow.backgroundColor = UIColor.blueColor();
+
+var createButton =  function(args) {
+
+	var button = new UIButton();
+	
+	button.frame = CGRectMake(110, 100, 100, 44);
+	button.setTitle(args.title || '', 0);
+	button.setTitleColor(UIColor.redColor(), UIControlStateNormal); //UIControlStateNormal is not recognized, using its numeric value instead
+	
+	args.parent.addSubview(button);
+	
+	return button;
+};
+
+
+var btn = new createButton({title:'button', parent:keyWindow});
+

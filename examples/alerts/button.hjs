@@ -1,0 +1,44 @@
+@import('UIKit');
+@import('CoreGraphics');
+@import('Foundation');
+
+var createButton =  function(params) {
+
+	var button = new UIButton();
+	
+	button.frame = CGRectMake(110, 100, 100, 44);
+	button.setTitle(params.title || '', 0);
+	button.setTitleColor(UIColor.redColor(), UIControlStateNormal); //UIControlStateNormal is not recognized, using its numeric value instead
+	
+	params.parent.addSubview(button);
+	
+	
+	
+	
+	
+
+	button.addEventListener = function(event_type, event_fn) {
+		if (event_type == 'click') {
+			@class('ButtonHandler', NSObject, [], [
+			    {
+			        name: 'buttonClick',
+			        returnType: 'void',
+			        arguments: [],
+			        action: function() {
+			            console.log('clicked button ');
+						event_fn();
+			        }
+			    }
+			]);
+
+
+			var clickButtonHandler = new ButtonHandler();
+			button.addTarget(clickButtonHandler, NSSelectorFromString('buttonClick'), UIControlEventTouchDown);
+		}
+	};
+
+	return button;
+};
+
+
+exports.createButton = createButton;
