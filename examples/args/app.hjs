@@ -13,7 +13,7 @@ var createButton =  function(args) {
 	button.setTitle(args.title || '', 0);
 	button.setTitleColor(UIColor.redColor(), UIControlStateNormal); //UIControlStateNormal is not recognized, using its numeric value instead
 	
-	args.parent.addSubview(button);
+
 	
 	return button;
 };
@@ -21,3 +21,4 @@ var createButton =  function(args) {
 
 var btn = new createButton({title:'button', parent:keyWindow});
 
+keyWindow.addSubview(btn);
