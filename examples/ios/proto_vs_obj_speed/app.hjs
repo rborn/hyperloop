@@ -1,0 +1,48 @@
+var X,Y, x,y, i, intNow;
+
+X = function() {};
+X.prototype.message = function(s) { var mymessage = s + "";}
+X.prototype.addition = function(i,j) { return (i *2 + j * 2) / 2; }
+
+Y = function() {
+    this.message = function(s) { var mymessage = s + "";}
+    this.addition = function(i,j) { return (i *2 + j * 2) / 2; }
+};
+
+
+intNow = (new Date()).getTime();
+for (i = 0; i < 1000000; i++) {
+    y = new Y();
+    y.message('hi');
+    y.addition(i,2)
+}
+console.log('===== obj =====');
+console.log((new Date()).getTime() - intNow); 
+
+
+
+intNow = (new Date()).getTime();
+for (i = 0; i < 1000000; i++) {
+    x = new X();
+    x.message('hi');
+    x.addition(i,2)
+}
+console.log('===== prototype =====');
+console.log((new Date()).getTime() - intNow);
+
+
+
+/*
+
+results
+
+hyperloop Dan$ hyperloop package --platform=ios --src=examples/ios/proto_vs_obj_speed/ --dest=build --name=foo --appid=com.foo --launch --clean
+[INFO]  Compiling 7 source files
+[INFO]  Generated universal library file at build/libapp.a
+[INFO]  ===== obj =====
+[INFO]  589
+[INFO]  ===== prototype =====
+[INFO]  94
+
+
+*/
