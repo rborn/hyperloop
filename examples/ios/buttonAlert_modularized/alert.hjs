@@ -1,0 +1,40 @@
+@import('UIKit');
+@import('CoreGraphics');
+@import('Foundation');
+
+
+var createAlert =  function(params) {
+	
+    var alert = new UIAlertView();
+    alert.title = params.title;
+    alert.message = params.message;
+
+	for (var i=0; i < params.buttons.length; i++) {
+		 alert.addButtonWithTitle(params.buttons[i]);
+	};
+	
+	
+	
+	alert.addEventListener = function(event_type, event_fn) {
+		if (event_type == 'click') {
+			@class('AlertViewDelegate', NSObject, [UIAlertViewDelegate], [
+			    {
+			        name: 'alertView',
+			        returnType: 'void',
+			        arguments: [ { type: 'UIAlertView', name: 'alertView' }, { type: 'NSInteger', name: 'clickedButtonAtIndex'} ],
+			        action: function(action_params) {
+			            console.log('clicked alert button: ' + action_params.clickedButtonAtIndex);
+						event_fn({index:action_params.clickedButtonAtIndex});
+			        }
+			    }
+			]);
+
+			alert.delegate = new AlertViewDelegate();;
+		}
+	}
+
+	return alert;
+}
+
+
+exports.createAlert = createAlert;

@@ -6,15 +6,9 @@ var createButton =  function(params) {
 
 	var button = new UIButton();
 	
-	button.frame = CGRectMake(110, 100, 100, 44);
+	button.frame = CGRectMake(params.left, params.top, params.width, params.height);
 	button.setTitle(params.title || '', 0);
-	button.setTitleColor(UIColor.redColor(), UIControlStateNormal); //UIControlStateNormal is not recognized, using its numeric value instead
-	
-	params.parent.addSubview(button);
-	
-	
-	
-	
+	button.setTitleColor(UIColor.redColor(), UIControlStateNormal);
 	
 
 	button.addEventListener = function(event_type, event_fn) {
